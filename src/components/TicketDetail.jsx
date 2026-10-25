@@ -1,4 +1,4 @@
-import { Sparkles, Save, CheckCircle2 } from 'lucide-react'
+import { Sparkles, Save, CheckCircle2, Send } from 'lucide-react'
 import { PriorityBadge, StatusBadge, FlagBadge } from './Badges'
 import TicketControls from './TicketControls'
 import InternalNotes from './InternalNotes'
@@ -10,7 +10,7 @@ const Row = ({ label, value }) => (
   </div>
 )
 
-export default function TicketDetail({ ticket, draft, notice, unsaved, aiBusy, hasDraft, savedLabel, onDraft, onGenerate, onSave, onResolve, onField, onFlag, onAddNote, onDeleteNote }) {
+export default function TicketDetail({ ticket, draft, notice, unsaved, aiBusy, hasDraft, savedLabel, onDraft, onGenerate, onSave, onResolve, canSend, onSend, onField, onFlag, onAddNote, onDeleteNote }) {
   const resolved = ticket.status === 'Resolved'
   return (
     <section aria-label={`Ticket ${ticket.id} details`} className="flex flex-col gap-4 border border-ivory-200 bg-white p-4 md:p-5">
@@ -70,10 +70,15 @@ export default function TicketDetail({ ticket, draft, notice, unsaved, aiBusy, h
           <button onClick={onSave} disabled={resolved} className="inline-flex items-center gap-1.5 rounded border border-charcoal-500 px-3 py-2 text-sm hover:bg-ivory-100 disabled:opacity-40">
             <Save size={15} aria-hidden="true" /> Save Draft
           </button>
+          <button onClick={onSend} disabled={!canSend} title={canSend ? 'Record this reply as sent (demo)' : 'Review and approve the reply first'}
+            className="inline-flex items-center gap-1.5 rounded bg-charcoal-900 px-3 py-2 text-sm text-white hover:bg-charcoal-700 disabled:opacity-40">
+            <Send size={15} aria-hidden="true" /> Send Reply (demo)
+          </button>
           <button onClick={onResolve} disabled={resolved} className="inline-flex items-center gap-1.5 rounded bg-moss-600 px-3 py-2 text-sm text-white hover:bg-moss-700 disabled:opacity-40">
             <CheckCircle2 size={15} aria-hidden="true" /> Mark as Resolved
           </button>
         </div>
+        {!resolved && !canSend && <p className="mt-2 text-xs text-charcoal-500">Send Reply unlocks after you review and approve the reply in the Quality review panel. Editing the reply removes approval.</p>}
         <p role="status" aria-live="polite" className="mt-2 min-h-5 text-sm text-moss-700">{notice}</p>
       </div>
     </section>

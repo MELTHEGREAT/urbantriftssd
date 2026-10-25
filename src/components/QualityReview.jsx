@@ -62,7 +62,7 @@ export default function QualityReview({ draft, review, approvedText, onRun, onAp
             </label>
             <button onClick={() => { onApprove(); setRead(false) }} disabled={!canApprove}
               className="mt-2 rounded bg-moss-600 px-3 py-2 text-sm text-white hover:bg-moss-700 disabled:opacity-40">Approve reply</button>
-            {approved && <p className="mt-2 text-sm text-moss-700">Approved by agent (demo). Nothing is sent. Editing the reply removes approval.</p>}
+            {approved && <p className="mt-2 text-sm text-moss-700">Approved by agent (demo). Use Send Reply (demo) to record it. No real email is sent. Editing the reply removes approval.</p>}
           </div>
         </>
       )}

@@ -77,7 +77,18 @@ export default function App() {
   }
   const approve = () => {
     setApproved((x) => ({ ...x, [selected.id]: draft }))
-    setNotice('Reply approved by agent (demo). Nothing is sent.')
+    setNotice('Reply approved (demo). You can now select Send Reply. No real email is sent.')
+  }
+  // Simulated send: records the approved reply in the conversation. No email is delivered.
+  const canSend = approved[selected.id] === draft && draft.trim() !== '' && selected.status !== 'Resolved'
+  const sendReply = () => {
+    if (!canSend) return
+    const id = selected.id, text = draft
+    const entry = { from: 'agent', time: `Today, ${timeLabel(new Date().toISOString())}`, text }
+    setTickets((all) => all.map((t) => (t.id === id ? { ...t, status: 'Pending', history: [...t.history, entry] } : t)))
+    const without = (o) => Object.fromEntries(Object.entries(o).filter(([k]) => k !== id))
+    setDrafts(without); setSavedDrafts(without); setSavedAt(without); setApproved(without); setReviews(without)
+    setNotice(`Reply sent (demo). No email was delivered. ${id} is now Pending.`)
   }
   const saveDraft = () => {
     const now = new Date().toISOString()
@@ -144,7 +155,7 @@ export default function App() {
                 <TicketDetail ticket={selected} draft={draft} notice={notice} unsaved={unsaved} aiBusy={ai[selected.id]?.status === 'loading'} hasDraft={!!ai[selected.id]?.result}
                   savedLabel={savedAt[selected.id] ? timeLabel(savedAt[selected.id]) : ''}
                   onDraft={(v) => setDrafts((d) => ({ ...d, [selected.id]: v }))}
-                  onGenerate={generate} onResolve={resolve} onSave={saveDraft}
+                  onGenerate={generate} onResolve={resolve} onSave={saveDraft} canSend={canSend} onSend={sendReply}
                   onField={setField} onFlag={setFlag} onAddNote={addNote} onDeleteNote={deleteNote} />
                 <div className="flex flex-col gap-4">
                   <AiPanel ticket={selected} ai={ai[selected.id]} />
